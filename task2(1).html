@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Image Encryption Tool</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            padding: 20px;
+            color: #fff;
+        }
+        
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 25px;
+            font-size: 2.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        h1:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            border-radius: 2px;
+        }
+        
+        .image-section {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .image-box {
+            text-align: center;
+            margin: 10px;
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .image-box h3 {
+            margin-bottom: 15px;
+            color: #8e2de2;
+            font-size: 1.4rem;
+        }
+        
+        .image-box img, .image-box canvas {
+            max-width: 100%;
+            max-height: 300px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            background: #222;
+        }
+        
+        .controls {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .control-group {
+            margin: 15px 0;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        label {
+            display: inline-block;
+            width: 180px;
+            font-weight: bold;
+            margin-right: 10px;
+            color: #e0e0e0;
+        }
+        
+        input, select {
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        input:focus, select:focus {
+            outline: 2px solid #8e2de2;
+        }
+        
+        button {
+            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        #decryptBtn {
+            background: linear-gradient(to right, #00b09b, #96c93d);
+        }
+        
+        #downloadBtn {
+            background: linear-gradient(to right, #ff9800, #ff5722);
+        }
+        
+        .instructions {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 25px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .instructions h3 {
+            color: #8e2de2;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+        
+        .instructions p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        
+        .highlight {
+            background: rgba(142, 45, 226, 0.3);
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .image-section {
+                flex-direction: column;
+            }
+            
+            .control-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            label {
+                width: 100%;
+                margin-bottom: 8px;
+            }
+            
+            input, select {
+                width: 100%;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Advanced Image Encryption Tool</h1>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="imageInput">Upload Image:</label>
+                <input type="file" id="imageInput" accept="image/*">
+            </div>
+            <div class="control-group">
+                <label for="method">Encryption Method:</label>
+                <select id="method">
+                    <option value="swap">Pixel Swapping</option>
+                    <option value="math">Math Operation (XOR)</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="key">Encryption Key:</label>
+                <input type="number" id="key" min="1" max="255" value="42">
+            </div>
+            <div class="control-group" style="justify-content: center; margin-top: 20px;">
+                <button id="encryptBtn">Encrypt Image</button>
+                <button id="decryptBtn">Decrypt Image</button>
+                <button id="downloadBtn">Download Result</button>
+            </div>
+        </div>
+        
+        <div class="image-section">
+            <div class="image-box">
+                <h3>Original Image</h3>
+                <div id="originalImage">No image uploaded</div>
+            </div>
+            <div class="image-box">
+                <h3>Result Image</h3>
+                <div id="resultImage">Result will appear here</div>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3>How It Works</h3>
+            <p><span class="highlight">Pixel Swapping:</span> This method rearranges the positions of pixels in the image. The encryption key determines how pixels are shuffled. To decrypt, we reverse the shuffling process using the same key.</p>
+            <p><span class="highlight">Math Operation (XOR):</span> This method applies an XOR operation to each pixel's color values using the encryption key. XOR is special because applying it twice with the same key returns the original value (A XOR key XOR key = A).</p>
+            <p><span class="highlight">Important:</span> Always use the same key for decryption that you used for encryption!</p>
+        </div>
+        
+        <div class="footer">
+            <p>Simple Image Encryption Tool | Pixel Manipulation & Mathematical Operations</p>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const imageInput = document.getElementById('imageInput');
+        const encryptBtn = document.getElementById('encryptBtn');
+        const decryptBtn = document.getElementById('decryptBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const methodSelect = document.getElementById('method');
+        const keyInput = document.getElementById('key');
+        const originalImageDiv = document.getElementById('originalImage');
+        const resultImageDiv = document.getElementById('resultImage');
+        
+        // Global variables
+        let originalImageData = null;
+        let originalCanvas = null;
+        let currentImage = null;
+        
+        // Handle image upload
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    // Create a canvas to work with the image
+                    originalCanvas = document.createElement('canvas');
+                    const ctx = originalCanvas.getContext('2d');
+                    
+                    // Set canvas size to match image
+                    originalCanvas.width = img.width;
+                    originalCanvas.height = img.height;
+                    
+                    // Draw image on canvas
+                    ctx.drawImage(img, 0, 0);
+                    
+                    // Get image data for manipulation
+                    originalImageData = ctx.getImageData(0, 0, img.width, img.height);
+                    currentImage = img;
+                    
+                    // Display original image
+                    originalImageDiv.innerHTML = '';
+                    originalImageDiv.appendChild(img.cloneNode());
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+        
+        // Encrypt button handler
+        encryptBtn.addEventListener('click', function() {
+            if (!originalImageData) {
+                alert('Please upload an image first!');
+                return;
+            }
+            
+            const key = parseInt(keyInput.value);
+            if (isNaN(key) || key < 1 || key > 255) {
+                alert('Please enter a valid key between 1 and 255');
+                return;
+            }
+            
+            const method = methodSelect.value;
+            const imageData = new ImageData(
+                new Uint8ClampedArray(originalImageData.data),
+                originalImageData.width,
+                originalImageData.height
+            );
+            
+            if (method === 'swap') {
+                encryptBySwapping(imageData, key);
+            } else {
+                encryptByMath(imageData, key);
+            }
+            
+            displayResult(imageData);
+        });
+        
+        // Decrypt button handler
+        decryptBtn.addEventListener('click', function() {
+            if (!originalImageData) {
+                alert('Please upload an image first!');
+                return;
+            }
+            
+            const key = parseInt(keyInput.value);
+            if (isNaN(key) || key < 1 || key > 255) {
+                alert('Please enter a valid key between 1 and 255');
+                return;
+            }
+            
+            const method = methodSelect.value;
+            const imageData = new ImageData(
+                new Uint8ClampedArray(originalImageData.data),
+                originalImageData.width,
+                originalImageData.height
+            );
+            
+            if (method === 'swap') {
+                decryptBySwapping(imageData, key);
+            } else {
+                // For XOR, encryption and decryption are the same operation
+                encryptByMath(imageData, key);
+            }
+            
+            displayResult(imageData);
+        });
+        
+        // Download button handler
+        downloadBtn.addEventListener('click', function() {
+            if (!resultImageDiv.querySelector('canvas')) {
+                alert('No result image to download!');
+                return;
+            }
+            
+            const canvas = resultImageDiv.querySelector('canvas');
+            const link = document.createElement('a');
+            link.download = 'encrypted-image.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+        
+        // Pixel swapping encryption
+        function encryptBySwapping(imageData, key) {
+            const data = imageData.data;
+            const totalPixels = data.length / 4;
+            
+            // Create an array of pixel indices
+            const indices = [];
+            for (let i = 0; i < totalPixels; i++) {
+                indices.push(i);
+            }
+            
+            // Simple shuffle based on key
+            // We'll use a basic algorithm that's reversible
+            let seed = key;
+            for (let i = totalPixels - 1; i > 0; i--) {
+                // Generate a "random" index using the seed
+                seed = (seed * 1664525 + 1013904223) % 2147483647;
+                const j = Math.floor((seed / 2147483647) * (i + 1));
+                
+                // Swap indices
+                [indices[i], indices[j]] = [indices[j], indices[i]];
+            }
+            
+            // Create a copy of the original data
+            const originalData = new Uint8ClampedArray(data);
+            
+            // Reassign pixels according to shuffled indices
+            for (let i = 0; i < totalPixels; i++) {
+                const srcIndex = indices[i] * 4;
+                const destIndex = i * 4;
+                
+                data[destIndex] = originalData[srcIndex];     // R
+                data[destIndex + 1] = originalData[srcIndex + 1]; // G
+                data[destIndex + 2] = originalData[srcIndex + 2]; // B
+                data[destIndex + 3] = originalData[srcIndex + 3]; // A
+            }
+        }
+        
+        // Pixel swapping decryption
+        function decryptBySwapping(imageData, key) {
+            const data = imageData.data;
+            const totalPixels = data.length / 4;
+            
+            // Create an array of pixel indices
+            const indices = [];
+            for (let i = 0; i < totalPixels; i++) {
+                indices.push(i);
+            }
+            
+            // Apply the same shuffle as in encryption
+            let seed = key;
+            for (let i = totalPixels - 1; i > 0; i--) {
+                seed = (seed * 1664525 + 1013904223) % 2147483647;
+                const j = Math.floor((seed / 2147483647) * (i + 1));
+                [indices[i], indices[j]] = [indices[j], indices[i]];
+            }
+            
+            // Create a copy of the current (encrypted) data
+            const encryptedData = new Uint8ClampedArray(data);
+            
+            // Create inverse mapping
+            const inverseIndices = new Array(totalPixels);
+            for (let i = 0; i < totalPixels; i++) {
+                inverseIndices[indices[i]] = i;
+            }
+            
+            // Reassign pixels according to inverse mapping
+            for (let i = 0; i < totalPixels; i++) {
+                const srcIndex = i * 4;
+                const destIndex = inverseIndices[i] * 4;
+                
+                data[destIndex] = encryptedData[srcIndex];
+                data[destIndex + 1] = encryptedData[srcIndex + 1];
+                data[destIndex + 2] = encryptedData[srcIndex + 2];
+                data[destIndex + 3] = encryptedData[srcIndex + 3];
+            }
+        }
+        
+        // Mathematical encryption (XOR)
+        function encryptByMath(imageData, key) {
+            const data = imageData.data;
+            
+            // Apply XOR to each color channel (skip alpha channel)
+            for (let i = 0; i < data.length; i += 4) {
+                data[i] ^= key;     // Red
+                data[i + 1] ^= key; // Green
+                data[i + 2] ^= key; // Blue
+                // Skip alpha channel (data[i + 3])
+            }
+        }
+        
+        // Display result image
+        function displayResult(imageData) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = imageData.width;
+            canvas.height = imageData.height;
+            
+            ctx.putImageData(imageData, 0, 0);
+            
+            resultImageDiv.innerHTML = '';
+            resultImageDiv.appendChild(canvas);
+        }
+    </script>
+</body>
+</html>
